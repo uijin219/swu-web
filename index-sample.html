@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  웹 프로그래밍 기초 - 샘플 페이지
+  서울여자대학교 / 윤홍수 교수 / 2026학년도 2학기
+
+  이 파일 하나만 GitHub 저장소에 올리면 페이지가 표시됩니다.
+  파일 이름은 반드시 소문자 index.html 이어야 합니다.
+
+  왼쪽 여백의 <header> <main> <section> 같은 표시는
+  각 영역이 어떤 시맨틱 태그로 만들어졌는지 보여 주는 것입니다.
+  2주차 'HTML 기본 - 웹 구조와 시맨틱 태그'에서 자세히 배웁니다.
+  ============================================================
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>웹 프로그래밍 기초 | 서울여자대학교</title>
+  <meta name="description" content="서울여자대학교 웹 프로그래밍 기초 2026학년도 2학기 강의 페이지">
+
+  <!-- 한글 글꼴을 인터넷에서 불러옵니다. 없어도 페이지는 정상 동작합니다. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <style>
+    /* ---------- 색과 글꼴을 한 곳에서 관리합니다 ---------- */
+    :root {
+      --ink:    #14213D;   /* 본문 잉크색 */
+      --muted:  #5B6478;   /* 흐린 글씨 */
+      --line:   #E4E7EC;   /* 구분선 */
+      --paper:  #FFFFFF;   /* 배경 */
+      --panel:  #F4F6F9;   /* 옅은 패널 */
+      --mark:   #FFE45C;   /* 형광펜 노랑 */
+      --ok:     #1A7F37;   /* 성공 표시 초록 */
+
+      --sans: "Pretendard", -apple-system, "Segoe UI", "맑은 고딕", sans-serif;
+      --mono: "D2Coding", "Consolas", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 96px;
+    }
+
+    /* ---------- 형광펜 효과 ---------- */
+    /* 글자 뒤에 노란 띠를 깔고, 페이지가 열릴 때 왼쪽에서 그어지게 합니다 */
+    .mark {
+      background-image: linear-gradient(
+        to bottom,
+        transparent 52%, var(--mark) 52%, var(--mark) 92%, transparent 92%
+      );
+      background-repeat: no-repeat;
+      background-size: 0% 100%;
+      animation: sweep .55s ease-out forwards;
+      padding: 0 .08em;
+    }
+    .mark.d1 { animation-delay: .25s; }
+    .mark.d2 { animation-delay: .45s; }
+
+    @keyframes sweep { to { background-size: 100% 100%; } }
+
+    /* 움직임을 줄이도록 설정한 사용자에게는 애니메이션을 끕니다 */
+    @media (prefers-reduced-motion: reduce) {
+      .mark { animation: none; background-size: 100% 100%; }
+    }
+
+    /* ---------- 왼쪽 여백의 태그 이름 표시 ---------- */
+    .block { position: relative; }
+    .block::before {
+      content: "<" attr(data-tag) ">";
+      position: absolute;
+      left: -128px;
+      top: .55rem;
+      width: 112px;
+      text-align: right;
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--muted);
+      opacity: .65;
+      white-space: nowrap;
+    }
+    /* 화면이 좁으면 태그 이름을 위쪽으로 내립니다 */
+    @media (max-width: 1000px) {
+      .block::before {
+        position: static;
+        display: block;
+        width: auto;
+        text-align: left;
+        margin-bottom: 6px;
+      }
+    }
+
+    /* ---------- 머리말 ---------- */
+    header { padding: 88px 0 40px; }
+
+    .eyebrow {
+      font-size: .8rem;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 6vw, 3.1rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.2;
+      margin: 0 0 18px;
+    }
+
+    .lead {
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin: 0 0 32px;
+      max-width: 34em;
+    }
+
+    /* ---------- 배포 확인 알림 ---------- */
+    .deployed {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      font-size: .93rem;
+    }
+    .deployed .check {
+      color: var(--ok);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .deployed code {
+      font-family: var(--mono);
+      font-size: .85em;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+
+    /* ---------- 본문 ---------- */
+    main { padding-top: 8px; }
+
+    section { padding: 44px 0; border-top: 1px solid var(--line); }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin: 0 0 22px;
+    }
+
+    /* 배우는 내용 3칸 */
+    .topics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    @media (max-width: 640px) {
+      .topics { grid-template-columns: 1fr; }
+    }
+    .topics li {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+    .topics h3 {
+      font-size: .98rem;
+      margin: 0 0 6px;
+      font-weight: 700;
+    }
+    .topics p {
+      margin: 0;
+      font-size: .87rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* 15주 계획 */
+    .weeks { margin: 0; padding: 0; list-style: none; }
+    .weeks li {
+      display: flex;
+      gap: 16px;
+      padding: 9px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: .93rem;
+    }
+    .weeks li:last-child { border-bottom: 0; }
+    .weeks .no {
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--muted);
+      min-width: 34px;
+      padding-top: 2px;
+    }
+    .weeks .exam { color: var(--muted); }
+
+    /* 준비물 */
+    .tools { margin: 0; padding: 0; list-style: none; }
+    .tools li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: .93rem;
+    }
+    .tools li:last-child { border-bottom: 0; }
+    .tools strong { font-weight: 700; }
+    .tools span { color: var(--muted); }
+
+    /* ---------- 꼬리말 ---------- */
+    footer {
+      border-top: 1px solid var(--line);
+      padding-top: 28px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+    footer p { margin: 0 0 4px; }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!-- header : 페이지 맨 위의 소개 영역 -->
+  <header class="block" data-tag="header">
+    <p class="eyebrow">서울여자대학교 · 2026학년도 2학기</p>
+    <h1>웹 프로그래밍 기초</h1>
+    <p class="lead">
+      HTML부터 PHP와 MySQL까지, 한 학기 동안
+      <span class="mark">직접 만들면서</span> 배웁니다.
+    </p>
+
+    <div class="deployed">
+      <span class="check">✓</span>
+      <p style="margin:0">
+        이 페이지가 보인다면 <span class="mark d1">GitHub Pages 배포에 성공</span>한 것입니다.
+        저장소의 <code>index.html</code> 파일이 그대로 웹페이지가 되었습니다.
+      </p>
+    </div>
+  </header>
+
+  <!-- main : 페이지의 핵심 내용 -->
+  <main class="block" data-tag="main">
+
+    <!-- section : 하나의 주제로 묶이는 구역 -->
+    <section class="block" data-tag="section">
+      <h2>이 수업에서 배우는 것</h2>
+      <ul class="topics">
+        <li>
+          <h3>웹 페이지 만들기</h3>
+          <p>HTML로 구조를 짜고, CSS로 꾸미고, JavaScript로 움직이게 합니다.</p>
+        </li>
+        <li>
+          <h3>서버 프로그래밍</h3>
+          <p>PHP로 방문자마다 다른 내용을 보여 주는 페이지를 만듭니다.</p>
+        </li>
+        <li>
+          <h3>데이터베이스</h3>
+          <p>MySQL에 정보를 저장하고 꺼내 쓰는 방법을 익힙니다.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="block" data-tag="section">
+      <h2>15주 강의 계획</h2>
+      <ul class="weeks">
+        <li><span class="no">01</span><span>수업 오리엔테이션 · Git과 GitHub 기초</span></li>
+        <li><span class="no">02</span><span>HTML 기본 — 웹 구조와 시맨틱 태그</span></li>
+        <li><span class="no">03</span><span>CSS 기본 — 웹페이지 스타일링</span></li>
+        <li><span class="no">04</span><span>JavaScript 기초 — 변수, 조건문, 반복문</span></li>
+        <li><span class="no">05</span><span>PHP 기초와 기본 문법</span></li>
+        <li><span class="no">06</span><span>조건문과 반복문</span></li>
+        <li><span class="no">07</span><span>배열과 함수</span></li>
+        <li><span class="no">08</span><span class="exam">중간고사</span></li>
+        <li><span class="no">09</span><span>폼과 PHP · 쿠키와 세션</span></li>
+        <li><span class="no">10</span><span>MySQL — 설치와 기본 질의어</span></li>
+        <li><span class="no">11</span><span>MySQL 심화 — PHP 연동과 CRUD 구현</span></li>
+        <li><span class="no">12</span><span>과제 기획서 발표</span></li>
+        <li><span class="no">13</span><span>모듈화와 에러 처리 · 보안 기초 · REST API</span></li>
+        <li><span class="no">14</span><span>과제 발표</span></li>
+        <li><span class="no">15</span><span class="exam">기말고사</span></li>
+      </ul>
+    </section>
+
+    <section class="block" data-tag="section">
+      <h2>수업 전 준비물</h2>
+      <ul class="tools">
+        <li><strong>XAMPP</strong> <span>— Apache, PHP, MySQL을 한 번에 설치합니다.</span></li>
+        <li><strong>Sublime Text</strong> <span>— 코드를 작성할 편집기입니다.</span></li>
+        <li><strong>Git</strong> <span>— 코드의 변경 이력을 기록합니다.</span></li>
+        <li><strong>GitHub 계정</strong> <span>— 작성한 코드를 보관하고 공개합니다.</span></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- footer : 페이지 맨 아래의 정보 -->
+  <footer class="block" data-tag="footer">
+    <p>웹 프로그래밍 기초 · 2026학년도 2학기</p>
+    <p>서울여자대학교 &nbsp;|&nbsp; 윤홍수 교수</p>
+  </footer>
+
+</div>
+</body>
+</html>
